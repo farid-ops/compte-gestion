@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity
-@Table(name = "users")
+@Table(name = "clients")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -25,7 +25,8 @@ public class Client implements Serializable {
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Collection<Compte> comptes = Collections.emptyList();
 
-    public Client(String username, String password){
+    public Client(Long id, String username, String password){
+        this.id = id;
         this.username = username;
         this.password = password;
     }
