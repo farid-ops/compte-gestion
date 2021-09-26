@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.Date;
 @Setter
 public class Client implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "client_id", nullable = false)
     private Long id;
     @Column(nullable = false, unique = true)
     private String firstname;
@@ -30,6 +32,11 @@ public class Client implements Serializable {
     private String password;
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Collection<Compte> comptes = Collections.emptyList();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "client_role",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles = new ArrayList<>();
 
     public Client(String firstname, String lastname, Date creationDate, String username, String password){
         this.firstname = firstname;

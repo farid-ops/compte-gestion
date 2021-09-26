@@ -2,8 +2,10 @@ package com.snowden.core.service;
 
 import com.snowden.core.dao.ClientRepository;
 import com.snowden.core.dao.CompteRepository;
+import com.snowden.core.dao.RoleRepository;
 import com.snowden.core.model.Client;
 import com.snowden.core.model.Compte;
+import com.snowden.core.model.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,14 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final CompteRepository compteRepository;
+    private final RoleRepository roleRepository;
 
     public ClientServiceImpl(ClientRepository clientRepository,
-                             CompteRepository compteRepository){
+                             CompteRepository compteRepository,
+                             RoleRepository roleRepository){
         this.clientRepository = clientRepository;
         this.compteRepository = compteRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -45,4 +50,27 @@ public class ClientServiceImpl implements ClientService {
         PageRequest pageRequest = PageRequest.of(page, size);
         return this.compteRepository.listeCompte(id, pageRequest);
     }
+
+    @Override
+    public Role save(Role role) {
+        return this.roleRepository.save(role);
+    }
+
+    @Override
+    public Client findByUsername(String username) {
+        return this.clientRepository.findByUsername(username);
+    }
+
+    @Override
+    public Role findByRoleName(String rolename) {
+        return this.roleRepository.findByRolename(rolename);
+    }
+
+    @Override
+    public void addRoleToClient(String username, String rolename) {
+        Client client = findByUsername(username);
+        Role role = findByRoleName(rolename);;
+        client.getRoles().add(role);
+    }
+
 }
