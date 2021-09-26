@@ -27,8 +27,8 @@ public class BankController {
     @PostMapping(value = "/consulter")
     public String consulterCompte(Model model,
                                   @RequestParam("codeCompte") String codeCompte,
-                                  @RequestParam("page") int page,
-                                  @RequestParam("size") int size){
+                                  @RequestParam(defaultValue = "0", name = "page") int page,
+                                  @RequestParam(defaultValue = "4",  name = "size") int size){
         try {
             Compte compte = this.bankService.consulterCompte(codeCompte);
             Page<Operation> operations = this.bankService.listeOperation(codeCompte, page, size);
@@ -47,9 +47,7 @@ public class BankController {
                              @RequestParam("operation") String typeOperation,
                              @RequestParam("code1") String code1,
                              @RequestParam("code2") String code2,
-                             @RequestParam("montant") double montant,
-                             @RequestParam("page") int page,
-                             @RequestParam("size") int size){
+                             @RequestParam("montant") double montant){
         try{
             if (typeOperation.equals("VERSER"))
                 this.bankService.verser(code1, montant);
