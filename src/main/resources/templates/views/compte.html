@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{views/template1}">
+<head>
+    <meta charset="UTF-8">
+    <title>compte</title>
+    <link rel="stylesheet" type="text/css"
+          th:href="@{webjars/bootstrap/3.3.7/css/bootstrap.min.css}">
+    <script th:src="@{webjars/jquery/1.11.1/jquery.min.js}"></script>
+    <script th:src="@{webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div layout:fragment="content1">
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel panel-heading">Consultation d'un compte</div>
+                <div class="panel-body">
+                    <form method="get" th:action="@{/consulterCompte}">
+                       <div class="input-group">
+                           <input type="text" class="form-control" id="" name="codeCompte1" placeholder="taper ici" th:value="${codeCompte}">
+                           <span class="input-group-btn"><button class="btn btn-primary" type="submit">Ok</button></span>
+                       </div>
+                    </form>
+                    <div class="text-danger"></div>
+                </div>
+            </div>
+            <div class="panel panel-primary" th:if="${compte}">
+                <div class="panel panel-heading">Informations sur le compte</div>
+                <div class="panel panel-body">
+                    <div>
+                        <label class="control-label">Client :</label>
+                        <label class="control-label" th:text="${compte.client.firstname}"></label>
+                    </div>
+                    <div>
+                        <label class="control-label">Code compte :</label>
+                        <label class="control-label" th:text="${compte.codeCompte}"></label>
+                    </div>
+                    <div>
+                        <label class="control-label">Solde :</label>
+                        <label class="control-label" th:text="${compte.solde}"></label>
+                    </div>
+                    <div>
+                        <label class="control-label">Date de creation :</label>
+                        <label class="control-label" th:text="${compte.creationDate}"></label>
+                    </div>
+                    <div>
+                        <label class="control-label">Type compte :</label>
+                        <label class="control-label" th:text="${compte.class.simpleName}"></label>
+                    </div>
+                    <div th:if="${compte.class.simpleName=='CompteCourant'}">
+                        <label class="control-label">Decouvert :</label>
+                        <label class="control-label" th:text="${compte.decouvert}"></label>
+                    </div>
+                    <div th:if="${compte.class.simpleName=='CompteEpargne'}">
+                        <label class="control-label">Taux :</label>
+                        <label class="control-label" th:text="${compte.taux}"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-primary" th:if="${compte}">
+                <div class="panel panel-heading">Operation sur le compte</div>
+                <div class="panel panel-body">
+                    <form  th:method="post" th:action="@{/saveOperation}">
+                        <div class="form-group">
+                            <label class="control-label">Compte :</label>
+                            <label class="control-label" th:text="${compte.codeCompte}"></label>
+                            <input type="hidden" class="form-control" name="codeCompte1" th:value="${codeCompte}">
+                        </div>
+                        <div class="">
+                            <div class="radio">
+                                <label for="retrait">
+                                    <input type="radio"
+                                           name="typeOperation"
+                                           id="retrait"
+                                           value="Retrait"
+                                           onchange="document.getElementById('vers').style.display='none'"
+                                           checked>Retrait
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="virement">
+                                    <input type="radio"
+                                           name="typeOperation"
+                                           id="versement"
+                                           value="Versement"
+                                           onchange="document.getElementById('vers').style.display='none'">Versement
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="virement">
+                                    <input type="radio"
+                                           name="typeOperation"
+                                           id="virement"
+                                           value="Virement"
+                                           onchange="document.getElementById('vers').style.display='block'">Virement
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" id="vers" style="display: none">
+                            <label class="control-label">Vers compte</label>
+                            <input type="text" name="codeCompte2" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Montant :</label>
+                            <input type="text" name="montant" class="form-control">
+                        </div>
+                        <div class="text-danger"></div>
+                        <div>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel panel-heading">Liste des operations</div>
+                <div class="panel panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Numero</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Montant</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="operation : ${operations}">
+                            <td th:text="${operation.compte.codeCompte}"></td>
+                            <td th:text="${operation.class.simpleName}"></td>
+                            <td th:text="${operation.operationDate}"></td>
+                            <td th:text="${operation.montant}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <ul class="nav nav-pills">
+                            <li th:each="page,status:${operations}"
+                                th:class="${status.index==pageCourant}?'active':''">
+                                <a th:href="@{/consulterCompte(codeCompte1=${compte.codeCompte},page=${status.index})}"
+                                   th:text="${status.index}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
