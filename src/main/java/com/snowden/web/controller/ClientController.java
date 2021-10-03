@@ -18,9 +18,9 @@ public class ClientController {
         this.clientService = clientService;
     }
 
-    @GetMapping("/client")
+    @GetMapping("/clients")
     public String client(){
-        return "formClient";
+        return "views/formClient";
     }
 
     @PostMapping("/consulterClient")
@@ -36,6 +36,6 @@ public class ClientController {
         }catch (Exception e){
             model.addAttribute("error",e);
         }
-        return "formClient";
+        return "views/formClient";
     }
 }

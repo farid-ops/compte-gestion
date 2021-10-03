@@ -19,14 +19,14 @@ public class BankController {
         this.bankService = bankService;
     }
 
-    @GetMapping(value = "/operation")
+    @GetMapping(value = "/operations")
     public String home(){
-        return "compte";
+        return "views/compte";
     }
 
-    @PostMapping(value = "/consulter")
+    @GetMapping(value = "/consulterCompte")
     public String consulterCompte(Model model,
-                                  @RequestParam("codeCompte") String codeCompte,
+                                  @RequestParam(name = "codeCompte1") String codeCompte,
                                   @RequestParam(defaultValue = "0", name = "page") int page,
                                   @RequestParam(defaultValue = "4",  name = "size") int size){
         try {
@@ -39,26 +39,26 @@ public class BankController {
         }catch (Exception e){
             model.addAttribute("error", e);
         }
-        return "compte";
+        return "views/compte";
     }
 
-    @PostMapping(value = "/operation")
+    @PostMapping(value = "/saveOperation")
     public String operations(Model model,
-                             @RequestParam("operation") String typeOperation,
-                             @RequestParam("code1") String code1,
-                             @RequestParam("code2") String code2,
-                             @RequestParam("montant") double montant){
+                             @RequestParam(name = "typeOperation") String typeOperation,
+                             @RequestParam(name = "codeCompte1") String code1,
+                             @RequestParam(name = "codeCompte2") String code2,
+                             @RequestParam(name = "montant") double montant){
         try{
-            if (typeOperation.equals("VERSER"))
+            if (typeOperation.equals("Versement"))
                 this.bankService.verser(code1, montant);
-            if (typeOperation.equals("RETRAIT"))
+            if (typeOperation.equals("Retrait"))
                 this.bankService.retirer(code1, montant);
-            if (typeOperation.equals("VIRER"))
+            if (typeOperation.equals("Virement"))
                 this.bankService.virer(code1, code2, montant);
         }catch (Exception e){
             model.addAttribute("error",e);
-            return "redirect:/consulter?code1="+code1+"&error="+e.getMessage();
+            return "redirect:/consulter?codeCompte1="+code1+"&error="+e.getMessage();
         }
-        return "redirecte:/consulter?code1="+code1;
+        return "redirect:/consulterCompte?codeCompte1="+code1;
     }
 }
