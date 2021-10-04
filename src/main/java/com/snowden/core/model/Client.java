@@ -38,6 +38,11 @@ public class Client implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles = new ArrayList<>();
 
+    public Client(String username, String password){
+        this.password = password;
+        this.password = password;
+    }
+
     public Client(String firstname, String lastname, Date creationDate, String username, String password){
         this.firstname = firstname;
         this.lastname = lastname;
